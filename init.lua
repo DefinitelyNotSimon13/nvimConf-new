@@ -29,3 +29,4 @@ require('lazy').setup({ require 'plugins' }, {
     },
   },
 })
+require('oil').setup()
