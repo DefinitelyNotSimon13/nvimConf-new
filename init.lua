@@ -30,3 +30,9 @@ require('lazy').setup({ require 'plugins' }, {
   },
 })
 require('oil').setup()
+vim.cmd.colorscheme 'catppuccin'
+vim.cmd.hi 'Comment gui=none'
+require('notify').setup {
+  background_colour = '#000000',
+  render = 'wrapped-compact',
+}
