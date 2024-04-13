@@ -117,7 +117,13 @@ return { -- LSP Configuration & Plugins
     --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
     local servers = {
       html = {},
-      clangd = {},
+      clangd = {
+        capabilities = require('cmp_nvim_lsp').default_capabilities(),
+        cmd = {
+          'clangd',
+          '--offset-encoding=utf-16',
+        },
+      },
       texlab = {},
       pyright = {},
       ruff_lsp = { on_attach = on_attach },
