@@ -1,5 +1,8 @@
 return { -- LSP Configuration & Plugins
   'neovim/nvim-lspconfig',
+  opts = {
+    inlay_hints = { enabled = true },
+  },
   dependencies = {
     -- Automatically install LSPs and related tools to stdpath for Neovim
     'williamboman/mason.nvim',
@@ -103,6 +106,10 @@ return { -- LSP Configuration & Plugins
       if client.name == 'ruff_lsp' then
         -- Disable hover in favor of Pyright
         client.server_capabilities.hoverProvider = false
+      end
+      if client.server_capabilities.inlayHintProvider then
+        local bufnr = vim.api.nvim_get_current_buf()
+        vim.lsp.inlay_hint.enable(bufnr, true)
       end
     end
 
