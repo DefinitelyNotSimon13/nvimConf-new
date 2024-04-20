@@ -25,6 +25,7 @@ return {
           server = {
             on_attach = function(client)
               if client.server_capabilities.inlayHintProvider then
+                local bufnr = vim.api.nvim_get_current_buf()
                 vim.lsp.inlay_hint.enable(bufnr, true)
               end
             end,

@@ -1,7 +1,18 @@
 return {
   'nvim-lualine/lualine.nvim',
-  dependencies = { 'nvim-tree/nvim-web-devicons' },
+  dependencies = {
+    'nvim-tree/nvim-web-devicons',
+    { 'abeldekat/harpoonline', version = '*' },
+  },
   config = function()
+    local harpoonline = require 'harpoonline'
+    harpoonline.setup {
+      on_update = function()
+        require('lualine').refresh()
+      end,
+    }
+    local lualine_c = { harpoonline.format, 'filename' }
+
     require('lualine').setup {
       options = {
         icons_enabled = true,
@@ -24,7 +35,7 @@ return {
       sections = {
         lualine_a = { 'mode' },
         lualine_b = { 'branch', 'diff', 'diagnostics' },
-        lualine_c = { 'filename' },
+        lualine_c = lualine_c,
         lualine_x = { 'encoding', 'fileformat', 'filetype' },
         lualine_y = { 'progress' },
         lualine_z = { 'location' },

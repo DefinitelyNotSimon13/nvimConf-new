@@ -32,6 +32,9 @@ return {
     vim.keymap.set('n', '<leader>a', function()
       harpoon:list():add()
     end, { desc = 'Harpoon [a]dd' })
+    vim.keymap.set('n', '<leader>hr', function()
+      harpoon:list():remove()
+    end, { desc = '[H]arpoon [r]emove' })
 
     vim.keymap.set('n', '<C-h>', function()
       harpoon:list():select(1)
