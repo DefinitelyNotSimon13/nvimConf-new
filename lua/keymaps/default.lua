@@ -5,6 +5,13 @@ vim.keymap.set('n', '<S-Tab>', '<cmd>bprevious<CR>', { desc = 'GoTo next buffer'
 vim.keymap.set('n', '<Up>', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
 vim.keymap.set('n', '<Down>', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
 
+-- Navigation
+vim.keymap.set('n', '<C-h>', '<cmd>TmuxNavigateLeft<cr>', { desc = 'Navigate Left' })
+vim.keymap.set('n', '<C-j>', '<cmd>TmuxNavigateDown<cr>', { desc = 'Navigate Down' })
+vim.keymap.set('n', '<C-k>', '<cmd>TmuxNavigateUp<cr>', { desc = 'Navigate Up' })
+vim.keymap.set('n', '<C-l>', '<cmd>TmuxNavigateRight<cr>', { desc = 'Navigate Right' })
+vim.keymap.set('n', '<C-\\>', '<cmd>TmuxNavigatePrevious<cr>', { desc = 'Navigate Previous' })
+
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
 
