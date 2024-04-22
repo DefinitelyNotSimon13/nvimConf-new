@@ -15,6 +15,7 @@ return {
           end
           return 'make install_jsregexp'
         end)(),
+
         dependencies = {
           -- `friendly-snippets` contains a variety of premade snippets.
           --    See the README about individual language/framework/plugin snippets:
@@ -42,6 +43,11 @@ return {
       luasnip.config.setup {}
 
       cmp.setup {
+        view = {
+          entries = {
+            follow_cursor = true,
+          },
+        },
         snippet = {
           expand = function(args)
             luasnip.lsp_expand(args.body)
@@ -101,6 +107,106 @@ return {
           { name = 'path' },
         },
       }
+
+      --[[
+  Get completion context, such as namespace where item is from.
+  Depending on the LSP, this information is stored in different places.
+  The process to find them is very manual: log the payloads And see where useful information is stored.
+
+  See https://www.reddit.com/r/neovim/comments/128ndxk/comment/jen9444/?utm_source=share&utm_medium=web2x&context=3
+]]
+      local function get_lsp_completion_context(completion, source)
+        local ok, source_name = pcall(function()
+          return source.source.client.config.name
+        end)
+        if not ok then
+          return nil
+        end
+
+        if source_name == 'tsserver' then
+          return completion.detail
+        elseif source_name == 'pyright' and completion.labelDetails ~= nil then
+          return completion.labelDetails.description
+        elseif source_name == 'texlab' then
+          return completion.detail
+        elseif source_name == 'clangd' then
+          local doc = completion.documentation
+          if doc == nil then
+            return
+          end
+
+          local import_str = doc.value
+
+          local i, j = string.find(import_str, '["<].*[">]')
+          if i == nil then
+            return
+          end
+
+          return string.sub(import_str, i, j)
+        end
+      end
+
+      format = function(entry, vim_item)
+        if not require('cmp.utils.api').is_cmdline_mode() then
+          local abbr_width_max = 25
+          local menu_width_max = 20
+
+          local choice = require('lspkind').cmp_format {
+            ellipsis_char = tools.ui.icons.ellipses,
+            maxwidth = abbr_width_max,
+            mode = 'symbol',
+          }(entry, vim_item)
+
+          choice.abbr = vim.trim(choice.abbr)
+
+          -- give padding until min/max width is met
+          -- https://github.com/hrsh7th/nvim-cmp/issues/980#issuecomment-1121773499
+          local abbr_width = string.len(choice.abbr)
+          if abbr_width < abbr_width_max then
+            local padding = string.rep(' ', abbr_width_max - abbr_width)
+            vim_item.abbr = choice.abbr .. padding
+          end
+
+          local cmp_ctx = get_lsp_completion_context(entry.completion_item, entry.source)
+          if cmp_ctx ~= nil and cmp_ctx ~= '' then
+            choice.menu = cmp_ctx
+          else
+            choice.menu = ''
+          end
+
+          local menu_width = string.len(choice.menu)
+          if menu_width > menu_width_max then
+            choice.menu = vim.fn.strcharpart(choice.menu, 0, menu_width_max - 1)
+            choice.menu = choice.menu .. tools.ui.icons.ellipses
+          else
+            local padding = string.rep(' ', menu_width_max - menu_width)
+            choice.menu = padding .. choice.menu
+          end
+
+          return choice
+        else
+          local abbr_width_min = 20
+          local abbr_width_max = 50
+
+          local choice = require('lspkind').cmp_format {
+            ellipsis_char = tools.ui.icons.ellipses,
+            maxwidth = abbr_width_max,
+            mode = 'symbol',
+          }(entry, vim_item)
+
+          choice.abbr = vim.trim(choice.abbr)
+
+          -- give padding until min/max width is met
+          -- https://github.com/hrsh7th/nvim-cmp/issues/980#issuecomment-1121773499
+          local abbr_width = string.len(choice.abbr)
+          if abbr_width < abbr_width_min then
+            local padding = string.rep(' ', abbr_width_min - abbr_width)
+            vim_item.abbr = choice.abbr .. padding
+          end
+
+          return choice
+        end
+      end
     end,
   },
   {},
