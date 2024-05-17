@@ -135,6 +135,7 @@ return { -- LSP Configuration & Plugins
       pyright = {},
       ruff_lsp = { on_attach = on_attach },
       typst_lsp = {},
+      rust_analyzer = {},
       -- gopls = {},
       -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
       --
